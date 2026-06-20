@@ -14,7 +14,7 @@ install_zhuannn_board() {
 }
 
 install_default_files() {
-  mkdir -p files/etc/config files/etc/uci-defaults
+  mkdir -p files/etc/config files/etc/sysctl.d files/etc/uci-defaults
 
   if [ -f package/base-files/files/etc/shadow ]; then
     sed -i "s|^root:[^:]*:|root:${ROOT_PASSWORD_HASH}:|" package/base-files/files/etc/shadow
@@ -54,6 +54,19 @@ config dropbear main
 	option Port '22'
 EOF
 
+  cat > files/etc/sysctl.d/99-tr3000-tcp-tune.conf <<'EOF'
+net.core.default_qdisc=fq
+net.ipv4.tcp_congestion_control=bbr
+net.core.rmem_max=16777216
+net.core.wmem_max=16777216
+net.ipv4.tcp_rmem=4096 87380 16777216
+net.ipv4.tcp_wmem=4096 65536 16777216
+net.ipv4.tcp_slow_start_after_idle=0
+net.ipv4.tcp_mtu_probing=1
+net.core.netdev_max_backlog=16384
+net.core.netdev_budget=600
+EOF
+
   cat > files/etc/uci-defaults/99-tr3000-defaults <<'EOF'
 #!/bin/sh
 uci -q batch <<'UCI'
@@ -85,6 +98,15 @@ uci -q commit system
 uci -q commit network
 uci -q commit dhcp
 uci -q commit dropbear
+
+if uci -q get nikki.proxy >/dev/null 2>&1; then
+	uci -q set nikki.proxy.tcp_mode='redirect'
+	uci -q set nikki.proxy.udp_mode='tproxy'
+	uci -q set nikki.proxy.log_level='error'
+	uci -q set nikki.proxy.bypass_china_mainland_ip='1'
+	uci -q set nikki.proxy.bypass_china_mainland_ip6='1'
+	uci -q commit nikki
+fi
 
 wifi config >/dev/null 2>&1 || true
 if [ -f /etc/config/wireless ]; then

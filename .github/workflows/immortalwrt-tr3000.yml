@@ -53,7 +53,7 @@ jobs:
             config: config/tr3000-512mb-v1-immortal.config
             device: cudy_tr3000-512mb-v1
             compat: cudy,tr3000-v1
-            artifact: ImmortalWrt_TR3000_512mb_v1_zhuannn_nikki_momo_4g5g
+            artifact: ImmortalWrt_TR3000_512mb_v2_zhuannn_nikki_bbr_4g5g
 
     steps:
       - name: Checkout builder
@@ -117,7 +117,7 @@ jobs:
           cd /workdir/openwrt
           CONFIG_FILE="${{ matrix.config }}" "$GITHUB_WORKSPACE/$DIY_P2_SH"
           make defconfig
-          grep -E 'CONFIG_TARGET_mediatek_filogic_DEVICE_${{ matrix.device }}|CONFIG_PACKAGE_luci-app-(store|nikki|momo)|CONFIG_PACKAGE_(mihomo-meta|sing-box|modemmanager|luci-proto-qmi|luci-proto-mbim)' .config
+          grep -E 'CONFIG_TARGET_mediatek_filogic_DEVICE_${{ matrix.device }}|CONFIG_PACKAGE_luci-app-(store|nikki)|CONFIG_PACKAGE_(mihomo-meta|modemmanager|luci-proto-qmi|luci-proto-mbim|kmod-tcp-bbr|kmod-sched|tc-full|iperf3)' .config
           grep -A28 'define Device/${{ matrix.device }}' target/linux/mediatek/image/filogic.mk
           grep -n -E 'model =|compatible =|reg = <0x005c0000' target/linux/mediatek/dts/mt7981b-cudy-tr3000-512mb-v1.dts
           grep -q 'IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata' target/linux/mediatek/image/filogic.mk
@@ -126,6 +126,8 @@ jobs:
           grep -n -A5 -B5 '${{ matrix.compat }}' target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh || true
           grep -Fq '${{ matrix.compat }}' target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh
           test -s files/etc/config/network
+          test -s files/etc/sysctl.d/99-tr3000-tcp-tune.conf
+          grep -q 'net.ipv4.tcp_congestion_control=bbr' files/etc/sysctl.d/99-tr3000-tcp-tune.conf
 
       - name: Download packages
         run: |
@@ -166,4 +168,4 @@ jobs:
           gh release create "$tag" firmware/* \
             --repo "$GITHUB_REPOSITORY" \
             --title "$tag ${{ matrix.name }}" \
-            --notes "ImmortalWrt sysupgrade.bin build for Cudy TR3000 v1 512M using zhuannn/cudy-tr3000-512 device definition, with iStore, Nikki, Momo and 4G/5G modem support."
+            --notes "ImmortalWrt sysupgrade.bin build for Cudy TR3000 v1 512M using zhuannn/cudy-tr3000-512 device definition, with iStore, Nikki, BBR TCP tuning and 4G/5G modem support."

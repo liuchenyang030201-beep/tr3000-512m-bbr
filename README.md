@@ -5,7 +5,8 @@ This builder follows zhuannn/cudy-tr3000-512 for the Cudy TR3000 v1 512M flash l
 Included in config:
 - LuCI and package manager
 - iStore app
-- Nikki and Momo
+- Nikki
+- BBR TCP congestion control, fq scheduler, tc-full and iperf3
 - 4G/5G modem drivers: QMI, MBIM, NCM, ModemManager, MHI, QRTR, USB serial/network modules
 
 Build output target:
