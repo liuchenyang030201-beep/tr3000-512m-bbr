@@ -7,10 +7,12 @@ CONFIG_FILE="${CONFIG_FILE:-config/tr3000-512mb-v1-immortal.config}"
 ROOT_PASSWORD_HASH='$1$tr3000$/RT6J1mD4MlJPWZiM/LBS.'
 
 install_zhuannn_board() {
-  cat "$WORKSPACE/openwrt-mod/cudy-tr3000-512.mk" >> target/linux/mediatek/image/filogic.mk
+  perl -0pi -e 's/(define Device\/cudy_tr3000-v1\b(?:(?!\nendef).)*?\n\s*IMAGE_SIZE := )65536k/${1}520000k/s' \
+    target/linux/mediatek/image/filogic.mk
+
   install -D -m 0644 \
     "$WORKSPACE/openwrt-mod/mt7981b-cudy-tr3000-512mb-v1.dts" \
-    target/linux/mediatek/dts/mt7981b-cudy-tr3000-512mb-v1.dts
+    target/linux/mediatek/dts/mt7981b-cudy-tr3000-v1.dts
 }
 
 install_default_files() {

@@ -10,6 +10,6 @@ Included in config:
 - 4G/5G modem drivers: QMI, MBIM, NCM, ModemManager, MHI, QRTR, USB serial/network modules
 
 Build output target:
-- `immortalwrt-mediatek-filogic-cudy_tr3000-512mb-v1-squashfs-sysupgrade.bin`
+- `immortalwrt-mediatek-filogic-cudy_tr3000-v1-squashfs-sysupgrade.bin`
 
-Use the sysupgrade `.bin` for normal U-Boot web flashing for this 512M layout.
+Use the sysupgrade `.bin` from LuCI System -> Backup / Flash Firmware.
