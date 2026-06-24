@@ -54,7 +54,7 @@ jobs:
             config: config/tr3000-512mb-v1-immortal.config
             device: cudy_tr3000-512mb-v1
             compat: cudy,tr3000-v1
-            artifact: ImmortalWrt_TR3000_512mb_v3_zhuannn_openclash_passwall_daed_istore_4g5g
+            artifact: ImmortalWrt_TR3000_512mb_v4_zhuannn_openclash_passwall_daed_istore_4g5g
 
     steps:
       - name: Checkout builder
@@ -91,10 +91,10 @@ jobs:
           path: |
             /workdir/.ccache
             /workdir/openwrt/dl
-          key: ${{ runner.os }}-immortalwrt-tr3000-daed-v3-${{ env.REPO_BRANCH }}-${{ matrix.device }}-${{ hashFiles('config/*.config', 'feeds-immortalwrt.conf', 'diy-part*.sh', 'diy-immortal512-zhuannn.sh', 'openwrt-mod/**') }}
+          key: ${{ runner.os }}-immortalwrt-tr3000-daed-v4-${{ env.REPO_BRANCH }}-${{ matrix.device }}-${{ hashFiles('config/*.config', 'feeds-immortalwrt.conf', 'diy-part*.sh', 'diy-immortal512-zhuannn.sh', 'openwrt-mod/**') }}
           restore-keys: |
-            ${{ runner.os }}-immortalwrt-tr3000-daed-v3-${{ env.REPO_BRANCH }}-${{ matrix.device }}-
-            ${{ runner.os }}-immortalwrt-tr3000-daed-v3-${{ env.REPO_BRANCH }}-
+            ${{ runner.os }}-immortalwrt-tr3000-daed-v4-${{ env.REPO_BRANCH }}-${{ matrix.device }}-
+            ${{ runner.os }}-immortalwrt-tr3000-daed-v4-${{ env.REPO_BRANCH }}-
 
       - name: Configure ccache
         run: |
