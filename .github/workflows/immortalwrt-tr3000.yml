@@ -54,7 +54,7 @@ jobs:
             config: config/tr3000-512mb-v1-immortal.config
             device: cudy_tr3000-512mb-v1
             compat: cudy,tr3000-v1
-            artifact: ImmortalWrt_TR3000_512mb_v4_zhuannn_openclash_passwall_daed_istore_4g5g
+            artifact: ImmortalWrt_TR3000_512mb_v5_zhuannn_openclash_passwall_daed_istore_4g5g
 
     steps:
       - name: Checkout builder
@@ -91,10 +91,10 @@ jobs:
           path: |
             /workdir/.ccache
             /workdir/openwrt/dl
-          key: ${{ runner.os }}-immortalwrt-tr3000-daed-v4-${{ env.REPO_BRANCH }}-${{ matrix.device }}-${{ hashFiles('config/*.config', 'feeds-immortalwrt.conf', 'diy-part*.sh', 'diy-immortal512-zhuannn.sh', 'openwrt-mod/**') }}
+          key: ${{ runner.os }}-immortalwrt-tr3000-daed-v5-${{ env.REPO_BRANCH }}-${{ matrix.device }}-${{ hashFiles('config/*.config', 'feeds-immortalwrt.conf', 'diy-part*.sh', 'diy-immortal512-zhuannn.sh', 'openwrt-mod/**') }}
           restore-keys: |
-            ${{ runner.os }}-immortalwrt-tr3000-daed-v4-${{ env.REPO_BRANCH }}-${{ matrix.device }}-
-            ${{ runner.os }}-immortalwrt-tr3000-daed-v4-${{ env.REPO_BRANCH }}-
+            ${{ runner.os }}-immortalwrt-tr3000-daed-v5-${{ env.REPO_BRANCH }}-${{ matrix.device }}-
+            ${{ runner.os }}-immortalwrt-tr3000-daed-v5-${{ env.REPO_BRANCH }}-
 
       - name: Configure ccache
         run: |
@@ -132,6 +132,9 @@ jobs:
           grep -q 'CONFIG_PACKAGE_kmod-sched-core=y' .config
           grep -q 'CONFIG_PACKAGE_kmod-sched-bpf=y' .config
           grep -q 'CONFIG_PACKAGE_kmod-veth=y' .config
+          grep -q '# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Rust_Client is not set' .config
+          grep -q '# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks_Rust_Server is not set' .config
+          ! grep -qE 'CONFIG_PACKAGE_(rust|shadowsocks-rust|sslocal|ssserver)=y' .config
           grep -A28 'define Device/${{ matrix.device }}' target/linux/mediatek/image/filogic.mk
           grep -n -E 'model =|compatible =|reg = <0x005c0000' target/linux/mediatek/dts/mt7981b-cudy-tr3000-512mb-v1.dts
           grep -q 'IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata' target/linux/mediatek/image/filogic.mk
